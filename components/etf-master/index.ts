@@ -1,0 +1,8 @@
+export { Header } from "./header"
+export { HeroSection } from "./hero-section"
+export { ETFExplanation } from "./etf-explanation"
+export { FeatureCards } from "./feature-cards"
+export { InvestmentTypes } from "./investment-types"
+export { AIChat } from "./ai-chat"
+export { CTASection } from "./cta-section"
+export { Footer } from "./footer"
