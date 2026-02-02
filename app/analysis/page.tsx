@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useEffect, useState, useMemo} from "react"
 import Link from "next/link"
 import {
   TrendingUp,
@@ -19,8 +19,9 @@ import {
 } from "lucide-react"
 import { AIChat } from "@/components/etf-master";
 
+
 interface ETFRecommendation {
-  id: string
+  id: number
   name: string
   ticker: string
   category: string
@@ -30,38 +31,82 @@ interface ETFRecommendation {
   matchScore: number
 }
 
-const recommendations: ETFRecommendation[] = [
-  {
-    id: "1",
-    name: "KODEX 200",
-    ticker: "069500",
-    category: "국내 대형주",
-    riskLevel: "중간",
-    expectedReturn: "+8.5%",
-    description: "코스피 200 지수를 추종하는 국내 대표 ETF",
-    matchScore: 95,
-  },
-  {
-    id: "2",
-    name: "TIGER 미국S&P500",
-    ticker: "360750",
-    category: "미국 대형주",
-    riskLevel: "중간",
-    expectedReturn: "+12.3%",
-    description: "미국 S&P500 지수에 투자하는 글로벌 분산 ETF",
-    matchScore: 88,
-  },
-  {
-    id: "3",
-    name: "KODEX 단기채권",
-    ticker: "153130",
-    category: "채권형",
-    riskLevel: "낮음",
-    expectedReturn: "+3.2%",
-    description: "안정적인 수익을 원하는 투자자를 위한 채권 ETF",
-    matchScore: 82,
-  },
+// interface ETFRecommendation {
+//   id: string
+//   name: string
+//   ticker: string
+//   category: string
+//   riskLevel: "낮음" | "중간" | "높음"
+//   expectedReturn: string
+//   description: string
+//   matchScore: number
+// }
+
+// const recommendations: ETFRecommendation[] = [
+//   {
+//     id: "1",
+//     name: "KODEX 200",
+//     ticker: "069500",
+//     category: "국내 대형주",
+//     riskLevel: "중간",
+//     expectedReturn: "+8.5%",
+//     description: "코스피 200 지수를 추종하는 국내 대표 ETF",
+//     matchScore: 95,
+//   },
+//   {
+//     id: "2",
+//     name: "TIGER 미국S&P500",
+//     ticker: "360750",
+//     category: "미국 대형주",
+//     riskLevel: "중간",
+//     expectedReturn: "+12.3%",
+//     description: "미국 S&P500 지수에 투자하는 글로벌 분산 ETF",
+//     matchScore: 88,
+//   },
+//   {
+//     id: "3",
+//     name: "KODEX 단기채권",
+//     ticker: "153130",
+//     category: "채권형",
+//     riskLevel: "낮음",
+//     expectedReturn: "+3.2%",
+//     description: "안정적인 수익을 원하는 투자자를 위한 채권 ETF",
+//     matchScore: 82,
+//   },
+// ]
+
+// currentPortfolio 타입 정의
+interface PortfolioItem {
+  investmentProfile: string
+  etfRiskScore: number
+  dividendScore: number
+  expectedTotalReturn: number
+  investmentType : string
+}
+
+// ETFItem 타입 정의
+interface ETFItem {
+  id: number
+  name: string
+  fltRt: number
+  riskLevel: number
+  category: string
+  description: string
+}
+interface ETFWithWeight extends ETFItem {
+  portfolioWeight: number
+}
+
+
+// 색상 팔레트
+const colorPalette = [
+  "bg-primary",
+  "bg-blue-400",
+  "bg-emerald-400",
+  "bg-purple-400",
+  "bg-orange-400",
 ]
+
 
 function ETFCard({ etf }: { etf: ETFRecommendation }) {
   const riskColors = {
@@ -106,6 +151,15 @@ function ETFCard({ etf }: { etf: ETFRecommendation }) {
   )
 }
 
+
+const riskLevelMap = (level: number): "낮음" | "중간" | "높음" => {
+  if (level <= 2) return "낮음"
+  if (level <= 4) return "중간"
+  return "높음"
+}
+
+
+
 function StatCard({
   icon: Icon,
   label,
@@ -131,6 +185,43 @@ function StatCard({
 }
 
 export default function AnalysisPage() {
+  const [surveyData, setSurveyData] = useState<any>(null)
+
+  useEffect(() => {
+    // sessionStorage에서 데이터 가져오기
+    const storedData = sessionStorage.getItem('surveyResponse')
+    if (storedData) {
+      setSurveyData(JSON.parse(storedData))
+      console.log('Survey Response data:', JSON.parse(storedData))
+    }
+  }, [])
+
+  console.log('Current Analysis Data:', surveyData);
+
+  // portfolioWeights와 etfs를 결합하여 ETFItem 배열 생성
+const combinedETFs = useMemo<ETFWithWeight[]>(() => {
+  if (!surveyData?.etfs || !surveyData?.portfolioWeights) return []
+
+  return surveyData.etfs.map((etf:ETFItem[], index:number) => ({
+    ...etf,
+    portfolioWeight: surveyData.portfolioWeights[index] ?? 0,
+  }))
+}, [surveyData])
+
+  console.log('Combined ETFs with weights:', combinedETFs);
+
+  const etfRecommendations: ETFRecommendation[] = combinedETFs.map((etf) => ({
+  id: etf.id,
+  name: etf.name,
+  ticker: `ETF-${etf.id}`, // 실제 ticker 있으면 교체
+  category: etf.category,
+  riskLevel: riskLevelMap(etf.riskLevel),
+  description: etf.description,
+  expectedReturn: `${etf.fltRt}%`,
+  matchScore: Math.round(etf.portfolioWeight * 100),
+}))
+
+
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Blurs */}
@@ -168,16 +259,20 @@ export default function AnalysisPage() {
             당신에게 딱 맞는<br />
             <span className="text-primary">ETF 포트폴리오</span>를 찾았어요!
           </h1>
-          <p className="text-muted-foreground text-lg font-medium">
+          {/* <p className="text-muted-foreground text-lg font-medium">
             투자 성향 분석 결과, 균형잡힌 성장형 투자자입니다
+          </p> */}
+          <p className="text-muted-foreground text-lg font-medium">
+            {surveyData?.investmentProfile || "투자 성향 분석 결과, 균형잡힌 성장형 투자자입니다"}
           </p>
         </section>
 
         {/* Stats Grid */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-14">
-          <StatCard icon={Target} label="투자 성향" value="성장형" color="bg-gradient-to-br from-primary to-blue-400" />
-          <StatCard icon={Shield} label="위험 허용도" value="중간" color="bg-gradient-to-br from-yellow-400 to-orange-400" />
-          <StatCard icon={PieChart} label="추천 ETF" value="3개" color="bg-gradient-to-br from-green-400 to-emerald-500" />
+          <StatCard icon={Target} label="투자 성향" value={surveyData?.investmentProfile?.slice(-4)} color="bg-gradient-to-br from-primary to-blue-400" />
+          <StatCard icon={Shield} label="ETF 위험도" value={surveyData?.etfRiskScore} color="bg-gradient-to-br from-yellow-400 to-orange-400" />
+          <StatCard icon={PieChart} label="배당률" value={`${surveyData?.dividendScore}%`} color="bg-gradient-to-br from-green-400 to-emerald-500" />
+          {/* @TODO 백엔드에서 데이터 가져올 때 예상 수익률 없음 */}
           <StatCard icon={Zap} label="예상 수익" value="+8.2%" color="bg-gradient-to-br from-purple-400 to-pink-500" />
         </section>
 
@@ -241,7 +336,7 @@ export default function AnalysisPage() {
         </section>
 
         {/* Portfolio Allocation */}
-        <section className="mb-10 md:mb-14">
+        {/* <section className="mb-10 md:mb-14">
           <div className="flex items-center gap-3 mb-6">
             <BarChart3 className="w-6 h-6 text-primary" />
             <h2 className="text-2xl font-black text-foreground">추천 포트폴리오 비중</h2>
@@ -262,6 +357,47 @@ export default function AnalysisPage() {
               안정성과 성장성의 균형을 맞춘 포트폴리오입니다. 국내외 주식에 80%, 채권에 20%를 배분하여 적정 수준의 리스크로 높은 수익을 추구합니다.
             </p>
           </div>
+        </section> */}
+          <section className="mb-10 md:mb-14">
+          <div className="flex items-center gap-3 mb-6">
+            <BarChart3 className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-black text-foreground">추천 포트폴리오 비중</h2>
+          </div>
+          <div className="p-6 bg-card/60 backdrop-blur-xl rounded-3xl border border-border/50">
+            {/* 동적 비중 바 */}
+            <div className="flex gap-2 h-8 rounded-full overflow-hidden mb-4">
+              {combinedETFs.map((etf, index) => (
+                <div
+                  key={etf.id}
+                  className={`${colorPalette[index % colorPalette.length]} flex items-center justify-center`}
+                  style={{ flex: etf.portfolioWeight }}
+                >
+                  <span className="text-xs font-bold text-white truncate px-2">
+                    {/* @TODO etfs에 ETF 대분류 카테고리가 없음(예: 국내, 해와, 금, 채권 등) */}
+                    {etf.name} {etf.portfolioWeight}%
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* ETF 목록 */}
+            <div className="space-y-3 mb-4">
+              {combinedETFs.map((etf, index) => (
+                <div key={etf.id} className="flex items-center gap-3">
+                  <div className={`w-4 h-4 ${colorPalette[index % colorPalette.length]} rounded-full`} />
+                  <span className="text-sm font-bold text-foreground flex-1">{etf.name}</span>
+                  <span className="text-sm font-bold text-primary">{etf.portfolioWeight}%</span>
+                </div>
+              ))}
+            </div>
+
+            {/* 추천 이유 */}
+            {surveyData?.reasonSummary && (
+              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                {surveyData?.reasonSummary}
+              </p>
+            )}
+          </div>
         </section>
 
         {/* ETF Recommendations */}
@@ -271,11 +407,52 @@ export default function AnalysisPage() {
             <h2 className="text-2xl font-black text-foreground">맞춤 ETF 추천</h2>
           </div>
           <div className="flex flex-col gap-4">
-            {recommendations.map((etf) => (
+            {etfRecommendations.map((etf) => (
               <ETFCard key={etf.id} etf={etf} />
             ))}
           </div>
         </section>
+        {/* ETF 상세 정보 */}
+        {/* <section className="mb-10 md:mb-14">
+          <div className="flex items-center gap-3 mb-6">
+            <Sparkles className="w-6 h-6 text-primary" />
+            <h2 className="text-2xl font-black text-foreground">맞춤 ETF 추천</h2>
+          </div>
+          <div className="flex flex-col gap-4">
+            {combinedETFs.map((etf, index) => (
+              <div key={etf.id} className="p-6 bg-card/80 backdrop-blur-xl rounded-3xl border border-border/50 shadow-lg">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className={`w-3 h-3 ${colorPalette[index % colorPalette.length]} rounded-full`} />
+                      <h3 className="text-xl font-black text-foreground">{etf.name}</h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                        etf.riskLevel <= 2 ? "bg-green-100 text-green-700" :
+                        etf.riskLevel <= 4 ? "bg-yellow-100 text-yellow-700" :
+                        "bg-red-100 text-red-700"
+                      }`}>
+                        위험도 {etf.riskLevel}
+                      </span>
+                    </div>
+                    <span className="text-sm font-semibold text-primary">{etf.category}</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs text-muted-foreground font-medium">비중</span>
+                    <p className="text-2xl font-black text-primary">{etf.portfolioWeight}%</p>
+                  </div>
+                </div>
+                <p className="text-sm text-muted-foreground leading-relaxed">{etf.description}</p>
+                {etf.fltRt !== 0 && (
+                  <div className="mt-3 pt-3 border-t border-border/30">
+                    <span className={`text-sm font-bold ${etf.fltRt > 0 ? "text-green-600" : "text-red-500"}`}>
+                      등락률: {etf.fltRt > 0 ? '+' : ''}{etf.fltRt}%
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section> */}
 
         <AIChat />
 

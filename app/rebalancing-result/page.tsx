@@ -44,6 +44,28 @@ interface PortfolioItem {
   currentWeight: number
 }
 
+// recommendedPortfolio 타입 정의
+interface RecommendedPortfolioItem {
+  etfId: number
+  etfName: string
+  category: string
+  currentWeight: number
+  recommendedWeight: number
+  changeAmount: number
+  changeReason: string
+}
+
+// newsEvidence 타입 정의
+interface NewsEvidenceItem {
+  etfId: number
+  etfName: string
+  newsTitle: string
+  newsUrl: string
+  publishedAt: string
+  impact: "POSITIVE" | "NEGATIVE" | "NEUTRAL"
+  summary: string
+}
+
 // 비율 높은 순으로 색상 할당하는 함수
 const assignColorsToPortfolio = (portfolio: PortfolioItem[]) => {
   // 1. currentWeight 기준으로 내림차순 정렬
@@ -81,6 +103,14 @@ export default function RebalancingResultPage() {
 
   console.log('> portfolioWithColors:', portfolioWithColors);
 
+  // recommendedPortfolio 가져오기
+  const recommendedPortfolio: RecommendedPortfolioItem[] = rebalancingData?.recommendedPortfolio || []
+  console.log('> recommendedPortfolio:', recommendedPortfolio);
+
+  // newsEvidence 가져오기
+  const newsEvidence: NewsEvidenceItem[] = rebalancingData?.newsEvidence || []
+  console.log('> newsEvidence:', newsEvidence);
+
 
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
@@ -108,43 +138,30 @@ export default function RebalancingResultPage() {
           </div>
 
           {/* Intro Message */}
-          <div className="p-6 md:p-8 border-b border-border/30">
+          {/* <div className="p-6 md:p-8 border-b border-border/30">
             <p className="text-foreground leading-relaxed">
               지난 설정한 주기에 맞춰 포트폴리오를 다시 점검했어.
               <br />
               큰 변화는 아니지만, 지금 자산 상황에 맞게 조금 다듬었어.
+            </p>
+          </div> */}
+          <div className="p-6 md:p-8 border-b border-border/30">
+            <p className="text-foreground leading-relaxed">
+              {rebalancingData?.rebalancingReason ? (
+                  rebalancingData.rebalancingReason
+              ) : (
+                <>
+                  지난 설정한 주기에 맞춰 포트폴리오를 다시 점검했어.
+                  <br />
+                  큰 변화는 아니지만, 지금 자산 상황에 맞게 조금 다듬었어.
+                </>
+              )}
             </p>
           </div>
 
           {/* Card Sections */}
           <div className="p-6 md:p-8 flex flex-col gap-6">
             {/* 1. Portfolio Summary Card */}
-            {/* <div className="p-5 bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl border border-primary/10">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <PieChart className="w-5 h-5 text-primary" />
-                </div>
-                <h2 className="text-lg font-bold text-foreground">현재 포트폴리오 한눈에 보기</h2>
-              </div>
-              <div className="flex flex-col gap-3">
-                {portfolioItems.map((item) => (
-                  <div key={item.name} className="flex items-center gap-3">
-                    <div className="flex-1">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-sm font-bold text-foreground">{item.name}</span>
-                        <span className="text-sm font-bold text-primary">{item.percentage}%</span>
-                      </div>
-                      <div className="h-2 bg-muted rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${item.color} rounded-full transition-all`}
-                          style={{ width: `${item.percentage}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div> */}
             <div className="p-5 bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl border border-primary/10">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -188,20 +205,26 @@ export default function RebalancingResultPage() {
                   <span className="text-center">이전</span>
                   <span className="text-center">이후</span>
                 </div>
-                {rebalancingChanges.map((item) => (
-                  <div key={item.name} className="grid grid-cols-3 gap-2 py-3 border-b border-border/30 last:border-0">
-                    <span className="text-sm font-bold text-foreground">{item.name}</span>
-                    <span className="text-sm text-muted-foreground text-center">{item.before}%</span>
-                    <span className={`text-sm font-bold text-center ${item.after > item.before ? "text-green-600" : item.after < item.before ? "text-red-500" : "text-foreground"}`}>
-                      {item.after}%
-                      {item.after > item.before && " (+)"}
-                      {item.after < item.before && " (-)"}
+                {recommendedPortfolio.map((item) => (
+                  <div key={item.etfId} className="grid grid-cols-3 gap-2 py-3 border-b border-border/30 last:border-0">
+                    <span className="text-sm font-bold text-foreground">{item.etfName}</span>
+                    <span className="text-sm text-muted-foreground text-center">{item.currentWeight}%</span>
+                    <span className={`text-sm font-bold text-center ${item.recommendedWeight > item.currentWeight ? "text-green-600" : item.recommendedWeight < item.currentWeight ? "text-red-500" : "text-foreground"}`}>
+                      {item.recommendedWeight}%
+                      {item.recommendedWeight > item.currentWeight && " (+)"}
+                      {item.recommendedWeight < item.currentWeight && " (-)"}
                     </span>
                   </div>
                 ))}
               </div>
 
               {/* Bullet Points */}
+              {/* @TODO 백엔드에서 추천 포트폴리오의 요약 설명이 나와야 함 */}
+              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                {recommendedPortfolio.map((item) => (
+                    <p key={item.etfId}>- {item.changeReason}</p>
+                ))}
+              </div>
               <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <p>- 변동성이 조금 높은 ETF 비중을 줄였어</p>
                 <p>- 상대적으로 안정적인 자산 비중을 늘렸어</p>
@@ -217,9 +240,12 @@ export default function RebalancingResultPage() {
                 <h2 className="text-lg font-bold text-foreground">왜 이런 조정을 했냐면</h2>
               </div>
               <div className="flex flex-col gap-3 text-sm text-foreground leading-relaxed">
-                <p>- 최근 자산 변동이 컸고</p>
+                {newsEvidence.map((item, index) => (
+                  <p key={`${item.etfId}-${index}`}>- {item.summary}</p>
+                )) }
+                {/* <p>- 최근 자산 변동이 컸고</p>
                 <p>- 네가 선택한 투자 성향 기준으로는</p>
-                <p>- 이 구성이 더 편할 것 같아서</p>
+                <p>- 이 구성이 더 편할 것 같아서</p> */}
               </div>
             </div>
 
@@ -232,6 +258,9 @@ export default function RebalancingResultPage() {
                 <h2 className="text-lg font-bold text-foreground">이건 꼭 알고 있어</h2>
               </div>
               <div className="flex flex-col gap-2 text-sm text-orange-800">
+                {rebalancingData?.recommendations || [].map((item) => (
+                  <p>{item}</p>
+                ))}
                 <p>- 단기적으로는 여전히 흔들릴 수 있어</p>
                 <p>- 이건 참고용이고, 최종 선택은 항상 네 몫이야</p>
               </div>
