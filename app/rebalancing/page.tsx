@@ -65,111 +65,111 @@ export default function RebalancingPage() {
     console.log(">> Rebalancing Request Body >>>: ", requestBody);
 
     try {
-      // // API 호출 예시 (실제 엔드포인트로 교체 필요)
-      // const response = await fetch('/api/rebalancing', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(requestBody),
-      // });
+      // API 호출 예시 (실제 엔드포인트로 교체 필요)
+      const response = await fetch('/api/rebalancing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Failed to submit rebalancing settings');
-      // }
+      if (!response.ok) {
+        throw new Error('Failed to submit rebalancing settings');
+      }
       
-      // const data = await response.json();
-      // console.log('Success:', data);
+      const data = await response.json();
+      console.log('Success:', data);
 
-      const data = {
-  portfolioId: 1,
-  portfolioName: "내 안정형 포트폴리오",
-  rebalancingRequired: true,
-  rebalancingReason:
-    "삼성전자에서 임원 및 주요주주들의 지분 변동이 집중적으로 발생하고 있으며, 삼성SDI가 작년 연간 1조7천억원의 영업손실을 기록하며 적자 전환했습니다.",
+//       const data = {
+//   portfolioId: 1,
+//   portfolioName: "내 안정형 포트폴리오",
+//   rebalancingRequired: true,
+//   rebalancingReason:
+//     "삼성전자에서 임원 및 주요주주들의 지분 변동이 집중적으로 발생하고 있으며, 삼성SDI가 작년 연간 1조7천억원의 영업손실을 기록하며 적자 전환했습니다.",
 
-  currentPortfolio: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      category: "국내주식",
-      currentWeight: 45.0
-    },
-    {
-      etfId: 2,
-      etfName: "TIGER 미국S&P500",
-      category: "해외주식",
-      currentWeight: 30.0
-    },
-    {
-      etfId: 5,
-      etfName: "KODEX 코스닥150",
-      category: "국내주식",
-      currentWeight: 25.0
-    }
-  ],
+//   currentPortfolio: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       category: "국내주식",
+//       currentWeight: 45.0
+//     },
+//     {
+//       etfId: 2,
+//       etfName: "TIGER 미국S&P500",
+//       category: "해외주식",
+//       currentWeight: 30.0
+//     },
+//     {
+//       etfId: 5,
+//       etfName: "KODEX 코스닥150",
+//       category: "국내주식",
+//       currentWeight: 25.0
+//     }
+//   ],
 
-  recommendedPortfolio: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      category: "국내주식",
-      currentWeight: 45.0,
-      recommendedWeight: 40.0,
-      changeAmount: -5.0,
-      changeReason: "비중 축소 권장"
-    },
-    {
-      etfId: 2,
-      etfName: "TIGER 미국S&P500",
-      category: "해외주식",
-      currentWeight: 30.0,
-      recommendedWeight: 35.0,
-      changeAmount: 5.0,
-      changeReason: "비중 확대 권장"
-    },
-    {
-      etfId: 5,
-      etfName: "KODEX 코스닥150",
-      category: "국내주식",
-      currentWeight: 25.0,
-      recommendedWeight: 25.0,
-      changeAmount: 0.0,
-      changeReason: "유지"
-    }
-  ],
+//   recommendedPortfolio: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       category: "국내주식",
+//       currentWeight: 45.0,
+//       recommendedWeight: 40.0,
+//       changeAmount: -5.0,
+//       changeReason: "비중 축소 권장"
+//     },
+//     {
+//       etfId: 2,
+//       etfName: "TIGER 미국S&P500",
+//       category: "해외주식",
+//       currentWeight: 30.0,
+//       recommendedWeight: 35.0,
+//       changeAmount: 5.0,
+//       changeReason: "비중 확대 권장"
+//     },
+//     {
+//       etfId: 5,
+//       etfName: "KODEX 코스닥150",
+//       category: "국내주식",
+//       currentWeight: 25.0,
+//       recommendedWeight: 25.0,
+//       changeAmount: 0.0,
+//       changeReason: "유지"
+//     }
+//   ],
 
-  newsEvidence: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      newsTitle: "삼성전자, 임원ㆍ주요주주 특정증권등 소유주식수 변동",
-      newsUrl: "https://news.koscom.co.kr/news/N20260202001",
-      publishedAt: "2026-02-02T13:32:00",
-      impact: "NEGATIVE",
-      summary: "삼성전자 임원진의 대규모 지분 변동 발생"
-    },
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      newsTitle: "삼성SDI, 작년 연간 연결 영업손실 1조7223억...적자전환",
-      newsUrl: "https://news.koscom.co.kr/news/N20260202002",
-      publishedAt: "2026-02-02T13:31:00",
-      impact: "NEGATIVE",
-      summary: "삼성SDI가 대규모 적자를 기록하며 실적 악화"
-    }
-  ],
+//   newsEvidence: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       newsTitle: "삼성전자, 임원ㆍ주요주주 특정증권등 소유주식수 변동",
+//       newsUrl: "https://news.koscom.co.kr/news/N20260202001",
+//       publishedAt: "2026-02-02T13:32:00",
+//       impact: "NEGATIVE",
+//       summary: "삼성전자 임원진의 대규모 지분 변동 발생"
+//     },
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       newsTitle: "삼성SDI, 작년 연간 연결 영업손실 1조7223억...적자전환",
+//       newsUrl: "https://news.koscom.co.kr/news/N20260202002",
+//       publishedAt: "2026-02-02T13:31:00",
+//       impact: "NEGATIVE",
+//       summary: "삼성SDI가 대규모 적자를 기록하며 실적 악화"
+//     }
+//   ],
 
-  riskAssessment: "MEDIUM",
+//   riskAssessment: "MEDIUM",
 
-  recommendations: [
-    "국내 반도체 섹터의 단기 변동성을 고려하여 해외 주식 비중을 확대하는 것이 안정적입니다",
-    "삼성SDI 등 2차전지 관련 종목의 실적 회복 시기를 주시하며 재조정을 고려하세요",
-    "단기적 조정보다는 분할 매매를 통한 점진적 리밸런싱을 권장합니다"
-  ],
+//   recommendations: [
+//     "국내 반도체 섹터의 단기 변동성을 고려하여 해외 주식 비중을 확대하는 것이 안정적입니다",
+//     "삼성SDI 등 2차전지 관련 종목의 실적 회복 시기를 주시하며 재조정을 고려하세요",
+//     "단기적 조정보다는 분할 매매를 통한 점진적 리밸런싱을 권장합니다"
+//   ],
 
-  analyzedAt: "2026-02-02T14:30:15"
-};
+//   analyzedAt: "2026-02-02T14:30:15"
+// };
 
       // sessionStorage에 데이터 저장
       sessionStorage.setItem('rebalancingResult', JSON.stringify(data));

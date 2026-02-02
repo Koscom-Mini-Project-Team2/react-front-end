@@ -269,7 +269,8 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
 
         {/* Stats Grid */}
         <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 md:mb-14">
-          <StatCard icon={Target} label="투자 성향" value={surveyData?.investmentProfile?.slice(-4)} color="bg-gradient-to-br from-primary to-blue-400" />
+          {/* @TODO 투자 성향 키워드로 가져와야 함 from back*/}
+          <StatCard icon={Target} label="투자 성향" value="성장형" color="bg-gradient-to-br from-primary to-blue-400" />
           <StatCard icon={Shield} label="ETF 위험도" value={surveyData?.etfRiskScore} color="bg-gradient-to-br from-yellow-400 to-orange-400" />
           <StatCard icon={PieChart} label="배당률" value={`${surveyData?.dividendScore}%`} color="bg-gradient-to-br from-green-400 to-emerald-500" />
           {/* @TODO 백엔드에서 데이터 가져올 때 예상 수익률 없음 */}
