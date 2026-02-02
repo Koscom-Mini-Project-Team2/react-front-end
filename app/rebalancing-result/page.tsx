@@ -11,6 +11,7 @@ import {
   Settings,
   Mail,
 } from "lucide-react"
+import { useEffect, useState, useMemo } from "react"
 
 // Portfolio data
 const portfolioItems = [
@@ -26,7 +27,61 @@ const rebalancingChanges = [
   { name: "ARIRANG 고배당", before: 25, after: 25 },
 ]
 
+// 색상 팔레트 정의
+const colorPalette = [
+  "bg-primary",
+  "bg-blue-400",
+  "bg-emerald-400",
+  "bg-purple-400",
+  "bg-orange-400",
+]
+
+// currentPortfolio 타입 정의
+interface PortfolioItem {
+  etfId: number
+  etfName: string
+  category: string
+  currentWeight: number
+}
+
+// 비율 높은 순으로 색상 할당하는 함수
+const assignColorsToPortfolio = (portfolio: PortfolioItem[]) => {
+  // 1. currentWeight 기준으로 내림차순 정렬
+  const sorted = [...portfolio].sort((a, b) => b.currentWeight - a.currentWeight)
+  
+  // 2. 정렬된 순서대로 색상 할당
+  return sorted.map((item, index) => ({
+    ...item,
+    color: colorPalette[index % colorPalette.length] // 색상이 부족하면 반복
+  }))
+}
+
 export default function RebalancingResultPage() {
+  const [rebalancingData, setRebalancingData] = useState<any>(null)
+
+  useEffect(() => {
+    // sessionStorage에서 데이터 가져오기
+    const storedData = sessionStorage.getItem('rebalancingResult')
+    if (storedData) {
+      setRebalancingData(JSON.parse(storedData))
+      // 사용 후 삭제 (선택사항)
+      sessionStorage.removeItem('rebalancingResult')
+    }
+  }, [])
+
+  console.log('Rebalancing Result data:', rebalancingData);
+
+  // useMemo로 색상 할당된 포트폴리오 생성 (최적화)
+  const portfolioWithColors = useMemo(() => {
+    if (!rebalancingData?.currentPortfolio) {
+      return []
+    }
+    return assignColorsToPortfolio(rebalancingData.currentPortfolio)
+  }, [rebalancingData]) // rebalancingData를 의존성으로 변경
+
+  console.log('> portfolioWithColors:', portfolioWithColors);
+
+
   return (
     <main className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Blurs */}
@@ -64,7 +119,7 @@ export default function RebalancingResultPage() {
           {/* Card Sections */}
           <div className="p-6 md:p-8 flex flex-col gap-6">
             {/* 1. Portfolio Summary Card */}
-            <div className="p-5 bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl border border-primary/10">
+            {/* <div className="p-5 bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl border border-primary/10">
               <div className="flex items-center gap-3 mb-5">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <PieChart className="w-5 h-5 text-primary" />
@@ -83,6 +138,32 @@ export default function RebalancingResultPage() {
                         <div
                           className={`h-full ${item.color} rounded-full transition-all`}
                           style={{ width: `${item.percentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div> */}
+            <div className="p-5 bg-gradient-to-br from-primary/5 to-secondary/20 rounded-2xl border border-primary/10">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <PieChart className="w-5 h-5 text-primary" />
+                </div>
+                <h2 className="text-lg font-bold text-foreground">현재 포트폴리오 한눈에 보기</h2>
+              </div>
+              <div className="flex flex-col gap-3">
+                {portfolioWithColors.map((item) => (
+                  <div key={item.etfId} className="flex items-center gap-3">
+                    <div className="flex-1">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-sm font-bold text-foreground">{item.etfName}</span>
+                        <span className="text-sm font-bold text-primary">{item.currentWeight}%</span>
+                      </div>
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${item.color} rounded-full transition-all`}
+                          style={{ width: `${item.currentWeight}%` }}
                         />
                       </div>
                     </div>

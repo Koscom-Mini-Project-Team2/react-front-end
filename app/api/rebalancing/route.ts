@@ -6,7 +6,7 @@ const BACKEND_URL = process.env.BACKEND_URL;
 //   throw new Error("BACKEND_URL is not defined in .env.local");
 // }
 
-// GET /api/survey → Spring Boot GET /survey
+// GET /api/rebalancing → Spring Boot GET /survey
 export async function GET() {
     try {
     console.log(">> get : " + `${BACKEND_URL}`);
@@ -17,7 +17,7 @@ export async function GET() {
         { status: 500 }
         );
       }
-    const res = await fetch(`${BACKEND_URL}/dummy`, {
+    const res = await fetch(`${BACKEND_URL}/rebalancing`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export async function GET() {
   }
 }
 
-// POST /api/survey → Spring Boot POST /survey/make-result
+// POST /api/rebalancing → Spring Boot POST /rebalancing
 export async function POST(req: Request) {
   try {
       console.log(">> POST : " + `${BACKEND_URL}`);
@@ -55,9 +55,9 @@ export async function POST(req: Request) {
         );
       }
     const body = await req.json();
-    console.log(">> Back make result", body);
+    console.log(">> Back Rebalancing: ", body);
 
-    const res = await fetch(`${BACKEND_URL}/etf/recommend`, {
+    const res = await fetch(`${BACKEND_URL}/api/portfolio/rebalancing/analyze`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

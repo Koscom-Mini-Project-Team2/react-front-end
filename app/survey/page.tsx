@@ -232,6 +232,83 @@ export default function SurveyPage() {
     }
   }
 
+  const generateResponseBody = (answers: Record<number, string>) => {
+  const qaList = Object.entries(answers).map(([stepId, optionId]) => {
+    const step = conversationFlow[parseInt(stepId)]
+    
+    if (!step || !step.question) {
+      return null
+    }
+
+    // 모든 메시지를 하나로 합치고, 질문 텍스트 추가
+    const questionText = [...step.messages, step.question.text].join(' ')
+    
+    // 선택된 옵션 찾기
+    const selectedOption = step.question.options.find(opt => opt.id === optionId)
+    
+    return {
+      question: questionText,
+      answer: selectedOption?.title || ''
+    }
+  }).filter(qa => qa !== null) // null 값 제거
+
+  return {
+    qaList
+  }
+}
+
+// 사용 예시
+const handleCompleteAnalysis = () => {
+  const responseBody = generateResponseBody(answers)
+  console.log(JSON.stringify(responseBody, null, 2))
+  
+  // API 호출 등에 사용
+  // await fetch('/api/analysis', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json' },
+  //   body: JSON.stringify(responseBody)
+  // })
+}
+  
+const handleAnalysisClick = async () => {
+  const responseBody = generateResponseBody(answers);
+  console.log(">> SurveyResult Response Body >>>: ", responseBody);
+
+  try {
+    // API로 POST 요청
+    const response = await fetch(`${window.location.origin}/api/survey`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(responseBody),
+    });
+
+    if (!response.ok) {
+      console.error('Failed to submit survey:', response.status);
+      // 에러 처리 (선택사항)
+      alert('설문 제출에 실패했습니다.');
+      return;
+    }
+
+    const data = await response.json();
+    console.log(">> Survey submission success:", data);
+
+    // localStorage에도 저장 (백업용)
+    localStorage.setItem('surveyResults', JSON.stringify(responseBody));
+    //localStorage.setItem('surveyResponse', JSON.stringify(data));
+
+    // sessionStorage에 데이터 저장
+    sessionStorage.setItem('surveyResponse', JSON.stringify(data));
+
+    // 분석 페이지로 이동
+    router.push('/analysis');
+  } catch (error) {
+    console.error('Error submitting survey:', error);
+    alert('네트워크 오류가 발생했습니다.');
+  }
+}
+
   const currentFlow = conversationFlow[currentStep]
 
   return (
@@ -395,7 +472,8 @@ export default function SurveyPage() {
         <footer className="shrink-0 border-t border-gray-100 bg-white/90 px-6 py-4 backdrop-blur-sm">
           <div className="space-y-3">
             <Button
-              onClick={() => router.push('/analysis')}
+              // onClick={() => router.push('/analysis')}
+              onClick={handleAnalysisClick}
               className="w-full rounded-full bg-white py-6 text-base font-bold text-blue-500 shadow-sm ring-1 ring-gray-200 transition-all hover:bg-gray-50 hover:shadow-md"
               size="lg"
             >
