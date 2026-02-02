@@ -11,7 +11,7 @@ const notoSansKr = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: 'REME-IK - 스마트한 투자 시작',
+  title: 'Ko-MERIT - 스마트한 투자 시작',
   description: 'ETF, 진짜 쉽게 알려줄게! MZ를 위한 똑똑한 투자 가이드',
   generator: 'v0.app',
   icons: {

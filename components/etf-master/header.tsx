@@ -34,7 +34,7 @@ export function Header() {
           <div className="w-11 h-11 bg-gradient-to-br from-primary to-blue-400 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
-          <span className="text-xl font-black tracking-tight text-primary">REME-IK</span>
+          <span className="text-xl font-black tracking-tight text-primary">Ko-MERIT</span>
         </div>
 
         {/* Desktop Navigation */}

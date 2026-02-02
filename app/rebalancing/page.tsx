@@ -46,7 +46,7 @@ export default function RebalancingPage() {
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
               <TrendingUp className="w-5 h-5 text-white" strokeWidth={3} />
             </div>
-            <span className="text-xl font-black tracking-tight text-primary">REME-IK</span>
+            <span className="text-xl font-black tracking-tight text-primary">Ko-MERIT</span>
           </Link>
           <Link
             href="/analysis"

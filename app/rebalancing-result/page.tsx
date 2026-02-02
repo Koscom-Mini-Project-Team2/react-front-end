@@ -42,7 +42,7 @@ export default function RebalancingResultPage() {
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
                 <TrendingUp className="w-5 h-5 text-white" strokeWidth={3} />
               </div>
-              <span className="text-lg font-black tracking-tight text-primary">REME-IK</span>
+              <span className="text-lg font-black tracking-tight text-primary">Ko-MERIT</span>
             </div>
             <h1 className="text-2xl md:text-3xl font-black text-foreground mb-2 text-balance">
               이번 리밸런싱 결과를 정리해봤어

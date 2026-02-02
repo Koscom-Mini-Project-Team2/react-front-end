@@ -15,7 +15,7 @@ export function Footer() {
           <div className="w-10 h-10 bg-gradient-to-br from-secondary to-blue-100 rounded-2xl flex items-center justify-center shadow-inner">
             <TrendingUp className="w-5 h-5 text-primary" />
           </div>
-          <span className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">REME-IK</span>
+          <span className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Ko-MERIT</span>
         </div>
 
         {/* Links */}
@@ -29,7 +29,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="text-center md:text-right">
-          <p className="text-sm font-bold text-slate-400">© 2024 REME-IK. Built for MZ.</p>
+          <p className="text-sm font-bold text-slate-400">© 2024 Ko-MERIT. Built for MZ.</p>
         </div>
       </div>
     </footer>

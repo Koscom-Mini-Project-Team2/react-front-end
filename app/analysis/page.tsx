@@ -144,7 +144,7 @@ export default function AnalysisPage() {
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-blue-400 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
               <TrendingUp className="w-5 h-5 text-white" strokeWidth={3} />
             </div>
-            <span className="text-xl font-black tracking-tight text-primary">REME-IK</span>
+            <span className="text-xl font-black tracking-tight text-primary">Ko-MERIT</span>
           </Link>
           <Link
             href="/survey"
@@ -284,7 +284,7 @@ export default function AnalysisPage() {
           <div className="p-8 md:p-12 bg-gradient-to-br from-primary to-blue-400 rounded-[2rem] text-white">
             <h3 className="text-2xl md:text-3xl font-black mb-3">지금 바로 투자를 시작해보세요!</h3>
             <p className="text-white/80 mb-6 font-medium">
-              REME-IK과 함께 스마트한 투자의 첫 걸음을 내딛어보세요.
+              Ko-MERIT과 함께 스마트한 투자의 첫 걸음을 내딛어보세요.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

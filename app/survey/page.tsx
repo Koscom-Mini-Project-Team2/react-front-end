@@ -283,7 +283,7 @@ export default function SurveyPage() {
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-400 shadow-lg shadow-blue-500/20">
                 <TrendingUp className="h-5 w-5 text-white" strokeWidth={3} />
               </div>
-              <span className="text-lg font-black tracking-tight text-blue-500">REME-IK</span>
+              <span className="text-lg font-black tracking-tight text-blue-500">Ko-MERIT</span>
             </Link>
             <div className="flex items-center gap-3">
               <span className="rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-blue-500">
