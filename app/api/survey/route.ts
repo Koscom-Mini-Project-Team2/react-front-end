@@ -17,7 +17,7 @@ export async function GET() {
         { status: 500 }
         );
     }
-    const res = await fetch(`${BACKEND_URL}`, {
+    const res = await fetch(`${BACKEND_URL}/dummy`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

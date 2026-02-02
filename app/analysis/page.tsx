@@ -17,6 +17,7 @@ import {
   Building2,
   CreditCard,
 } from "lucide-react"
+import { AIChat } from "@/components/etf-master";
 
 interface ETFRecommendation {
   id: string
@@ -275,6 +276,8 @@ export default function AnalysisPage() {
             ))}
           </div>
         </section>
+
+        <AIChat />
 
         {/* CTA Section */}
         <section className="text-center py-10 md:py-14">
