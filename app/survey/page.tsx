@@ -387,7 +387,7 @@ const handleAnalysisClick = async () => {
 
     // localStorage에도 저장 (백업용)
     localStorage.setItem('surveyResults', JSON.stringify(responseBody));
-
+    // session 수정
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('surveyResponse', JSON.stringify(data));
     }
