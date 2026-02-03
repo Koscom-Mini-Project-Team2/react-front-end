@@ -86,21 +86,21 @@ export function Header() {
           </a>
           <a
             className="text-base font-bold text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-2xl hover:bg-primary/5"
-            href="#"
+            href="/"
             onClick={() => setIsMenuOpen(false)}
           >
-            AI 어드바이저
+            ETF AI 튜터
           </a>
           <a
             className="text-base font-bold text-slate-600 hover:text-primary transition-colors py-3 px-4 rounded-2xl hover:bg-primary/5"
-            href="#"
+            href="/portfolio"
             onClick={() => setIsMenuOpen(false)}
           >
-            마켓 비교
+            ETF 찾아보기
           </a>
           <button className="mt-2 px-7 py-4 bg-gradient-to-r from-primary to-blue-400 text-white font-extrabold text-sm rounded-2xl hover:scale-105 transition-all shadow-lg shadow-primary/20"
-          onClick={handleApiTest}>
-            무료 시작
+          onClick={() => router.push("/portfolio")}>
+            내 포트폴리오 만들기
           </button>
         </nav>
       </div>
