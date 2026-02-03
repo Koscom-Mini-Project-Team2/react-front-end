@@ -8,7 +8,7 @@ import { TrendingUp, Search, AlertTriangle, Rocket, ChevronRight, ArrowLeft } fr
 
 interface Message {
   id: number
-  type: 'bot' | 'user'
+  type: 'bot' | 'user' | 'question'
   content: string
 }
 
@@ -21,109 +21,183 @@ interface Option {
 
 const conversationFlow = [
   {
-    id: 0,
-    messages: [
-      '오늘은 1년을 되돌아보는 날이야.',
-      '마이데이터 연동 완료! 지금 네가 실제로 굴릴 수 있는 돈 기준으로 시뮬레이션 해볼게.',
-      '선택에 따라 앞으로 등장하는 상황이 조금씩 달라질 거야.',
-      '그럼 시작해볼까?',
-      '친구 조A는 너랑 가까운 친구 사이고 터울이 없어서 투자 얘기 자주 하고 가끔 자랑해 😎',
-    ],
-    question: null,
-  },
-  {
     id: 1,
     messages: [
-      '📅 시나리오 1. xxxx년 1월: 처음 흔들리는 날',
-      '금요일 저녁, 친구랑 맥주 마시는 중 🍻',
-      '친구 A: "야… 나 오늘 계좌 열어봤는데 생각보다 많이 빠졌더라."',
-      '📉 요즘 뉴스: "글로벌 경기 둔화 우려, 증시 조정 국면"',
-      '네 자산 1,000만원 → 920만원 (-8%)',
-      '친구 A: "이거 더 떨어지는 거 아니냐… 너 같으면 어떻게 할 거야?"',
+      '시작하기 전에 몇 가지만 물어볼게 🙂',
+      '지금 상황에 맞게 시뮬레이션을 맞추려는 거야.',
     ],
     question: {
-      text: '너의 반응은?',
+      text: '투자 금액은 얼마야?',
       options: [
-        { id: 'A', title: '난 무서워서 일단 다 팔 듯…', subtitle: '손실 회피 성향이 강해요', icon: 'alert' },
-        { id: 'B', title: '반만 줄이고 상황 보지 뭐', subtitle: '신중하게 리스크를 관리해요', icon: 'search' },
-        { id: 'C', title: '원래 이런 거니까 그냥 둔다', subtitle: '장기적 관점으로 바라봐요', icon: 'search' },
-        { id: 'D', title: '이럴 때 조금 더 사는 거 아님?', subtitle: '기회를 포착하는 타입이에요', icon: 'rocket' },
+        { id: 'A', title: '0만원 이상 ~ 500만원 이하', icon: '' , subtitle:''},
+        { id: 'B', title: '500만원 이상 ~ 2,000만원 이하', icon: '', subtitle:''  },
+        { id: 'C', title: '2,000만원 이상 ~ 5,000만원 이하', icon: '' , subtitle:'' },
+        { id: 'D', title: '5,000만원 이상', icon: '', subtitle:''  },
       ],
     },
   },
   {
     id: 2,
     messages: [
-      '📅 시나리오 2. xxxx년 3월: 반등의 기미',
-      '주말 카페에서 노트북 켜고 있는 중 ☕',
-      '뉴스 알림: "증시 반등 조짐, 기술주 강세"',
-      '네 자산 920만원 → 980만원 (+6.5%)',
-      '친구 A: "오 좀 올랐네? 더 오르려나?"',
     ],
     question: {
-      text: '이때 너의 선택은?',
+      text: '이 투자의 목적은 뭐야?',
       options: [
-        { id: 'A', title: '본전 오면 빠진다', subtitle: '안전하게 원금 회복이 목표', icon: 'alert' },
-        { id: 'B', title: '좀 더 지켜본다', subtitle: '섣불리 움직이지 않아요', icon: 'search' },
-        { id: 'C', title: '추가 매수 고려', subtitle: '상승장에 더 태우고 싶어요', icon: 'rocket' },
+        { id: 'A', title: '노후 자금 마련', icon: '', subtitle:''  },
+        { id: 'B', title: '내 집 마련', icon: '', subtitle:''  },
+        { id: 'C', title: '자녀 교육비', icon: '' , subtitle:'' },
+        { id: 'D', title: '특별한 목적 없이 자산 증식', icon: '' , subtitle:'' },
+        { id: 'E', title: '배당', icon: '', subtitle:''  },
+        { id: 'F', title: '기타 (직접 입력)', icon: '', subtitle:''  },
       ],
     },
   },
   {
     id: 3,
     messages: [
-      '📅 시나리오 3. xxxx년 6월: 예상치 못한 급등',
-      '출근길 지하철에서 📱',
-      '뉴스 속보: "AI 관련주 폭등, 나스닥 사상 최고치"',
-      '네 자산 980만원 → 1,250만원 (+27.5%)',
-      '친구 A: "대박! 나 AI주 샀었는데 완전 떡상했어!"',
     ],
     question: {
-      text: '네 포트폴리오도 올랐어. 어떻게 할래?',
+      text: '1년 안에 큰돈 나갈 일 있어?',
       options: [
-        { id: 'A', title: '수익 실현하고 안전자산으로', subtitle: '번 돈은 지키는 게 우선', icon: 'alert' },
-        { id: 'B', title: '일부만 정리', subtitle: '반은 챙기고 반은 계속', icon: 'search' },
-        { id: 'C', title: '계속 홀딩', subtitle: '더 오를 수 있으니까', icon: 'rocket' },
+        { id: 'A', title: '전세 / 보증금', icon: '', subtitle:''  },
+        { id: 'B', title: '결혼 / 여행', icon: '' , subtitle:'' },
+        { id: 'C', title: '이직 / 휴식', icon: '' , subtitle:'' },
+        { id: 'D', title: '없음', icon: '' , subtitle:'' },
       ],
     },
   },
   {
     id: 4,
     messages: [
-      '📅 시나리오 4. xxxx년 9월: 급락의 공포',
-      '밤늦게 침대에서 핸드폰 확인 중 🌙',
-      '긴급 뉴스: "미국 금리 추가 인상, 글로벌 증시 급락"',
-      '네 자산 1,250만원 → 950만원 (-24%)',
-      '친구 A: "야 이거 진짜 큰일 아니냐? 나 멘탈 나갈 것 같아…"',
+      '📅 시나리오 1. 주말에 지인과 외출 중인 나',
+      '오늘도 롯데시네마 갔다가 햄버거 먹는거야?!',
+      '야 오늘은 맨날 가보던데 말고 다른데 가자~!',
+      '가본 적 없는 동네나 처음 보는 가게, 낯선 길을 선택할 수 있는 상황이다.\n이때 나는 새로운 장소를 직접 탐색해보는 것이 즐겁고 흥미롭다고 느끼는가?',
     ],
     question: {
       text: '이 상황에서 너는?',
-      options: [
-        { id: 'A', title: '손절하고 현금화', subtitle: '더 잃기 전에 빠져나가야 해', icon: 'alert' },
-        { id: 'B', title: '일부 정리', subtitle: '리스크를 줄이면서 관망', icon: 'search' },
-        { id: 'C', title: '버틴다', subtitle: '언젠간 다시 오르겠지', icon: 'search' },
-        { id: 'D', title: '추가 매수', subtitle: '공포에 사라는 말이 있잖아', icon: 'rocket' },
-      ],
+options: [
+  {
+    id: 'A',
+    title: '익숙한 데로 가자',
+    subtitle: '괜히 헤매느니 늘 가던 곳이 편해',
+    icon: 'alert'
+  },
+  {
+    id: 'B',
+    title: '살짝만 바꿔볼까',
+    subtitle: '완전 처음은 부담, 근처 새로운 가게 정도?',
+    icon: 'search'
+  },
+  {
+    id: 'C',
+    title: '일단 따라가 본다',
+    subtitle: '큰 기대는 없지만 나쁘진 않겠지',
+    icon: 'search'
+  },
+  {
+    id: 'D',
+    title: '완전 새로운 데 가자!',
+    subtitle: '처음 보는 동네·길이 제일 재밌어',
+    icon: 'rocket'
+  },
+]
+
     },
   },
   {
     id: 5,
     messages: [
-      '📅 시나리오 5. xxxx년 12월: 1년의 마무리',
-      '연말 정산하면서 1년 투자 돌아보는 중 📊',
-      '네 최종 자산: 1,080만원 (+8%)',
-      '친구 A: "그래도 플러스로 끝났네. 내년에는 어떻게 할 거야?"',
+      '📅 시나리오 2. 내일 중요한 발표(또는 면접, 시험)를 앞둔 나',
+      '자료는 이미 다 준비해놨는데, \n자꾸 “잘 못하면 어쩌지?”, “실수하면 어색해지지 않을까?” 같은 생각이 머릿속을 맴돈다.',
+      '잠자리에 누워도 쉽게 잠이 오지 않고, 심장이 평소보다 빨리 뛰는 느낌이 든다.',
     ],
     question: {
-      text: '내년 투자 계획은?',
-      options: [
-        { id: 'A', title: '안전하게 예금/채권 위주로', subtitle: '변동성은 이제 싫어', icon: 'alert' },
-        { id: 'B', title: '비슷하게 유지', subtitle: '올해처럼 하면 되지', icon: 'search' },
-        { id: 'C', title: '더 공격적으로', subtitle: '경험 쌓았으니 더 도전', icon: 'rocket' },
-      ],
+      text: '이런 상황에서 나는 중요한 일이 있기 전에 긴장을 많이 하는 편인가?',
+options: [
+  {
+    id: 'A',
+    title: '머릿속이 과열된다',
+    subtitle: '별별 최악의 상황까지 다 상상하게 돼',
+    icon: 'alert'
+  },
+  {
+    id: 'B',
+    title: '긴장되긴 하지만 관리 가능',
+    subtitle: '불안은 있어도 스스로 진정시키려 해',
+    icon: 'search'
+  },
+  {
+    id: 'C',
+    title: '평소랑 크게 다르지 않다',
+    subtitle: '중요한 날이어도 마음은 비교적 차분해',
+    icon: 'search'
+  },
+  {
+    id: 'D',
+    title: '오히려 집중이 잘 된다',
+    subtitle: '약간의 긴장이 컨디션을 끌어올려줘',
+    icon: 'rocket'
+  },
+]
+
     },
   },
 ]
+// const conversationFlow = [
+//   {
+//     id: 0,
+//     messages: [
+//       '시작하기 전에 몇 가지만 물어볼게 🙂',
+//       '지금 상황에 맞게 시뮬레이션을 맞추려는 거야.',
+//     ],
+//     question: {
+//       text: '투자 금액은 얼마야?',
+//       options: [
+//         { id: 'A', title: '0만원 이상 ~ 500만원 이하' },
+//         { id: 'B', title: '500만원 이상 ~ 2,000만원 이하' },
+//         { id: 'C', title: '2,000만원 이상 ~ 5,000만원 이하' },
+//         { id: 'D', title: '5,000만원 이상' },
+//       ],
+//     },
+//   },
+//   {
+//     id: 1,
+//     messages: [
+//       '좋아, 그럼 이 투자의 목적을 알려줘.',
+//       '목적에 따라 전략이 꽤 달라져.',
+//     ],
+//     question: {
+//       text: '이 투자의 목적은 뭐야?',
+//       options: [
+//         { id: 'A', title: '노후 자금 마련' },
+//         { id: 'B', title: '내 집 마련' },
+//         { id: 'C', title: '자녀 교육비' },
+//         { id: 'D', title: '특별한 목적 없이 자산 증식' },
+//         { id: 'E', title: '배당' },
+//         { id: 'F', title: '기타 (직접 입력)' },
+//       ],
+//     },
+//   },
+//   {
+//     id: 2,
+//     messages: [
+//       '마지막으로 하나만 더!',
+//       '가까운 미래의 현금 필요 여부도 중요해.',
+//     ],
+//     question: {
+//       text: '1년 안에 큰돈 나갈 일 있어?',
+//       options: [
+//         { id: 'A', title: '전세 / 보증금' },
+//         { id: 'B', title: '결혼 / 여행' },
+//         { id: 'C', title: '이직 / 휴식' },
+//         { id: 'D', title: '없음' },
+//       ],
+//     },
+//   },
+
+//   // 👉 여기서부터 기존 시나리오 id: 3, 4, 5 ...
+// ]
 
 export default function SurveyPage() {
   const router = useRouter()
@@ -136,6 +210,7 @@ export default function SurveyPage() {
 const [isComplete, setIsComplete] = useState(false)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const questionRef = useRef<HTMLDivElement>(null)
 
   const totalQuestions = conversationFlow.filter((f) => f.question).length
   const answeredQuestions = Object.keys(answers).length
@@ -145,9 +220,21 @@ const [isComplete, setIsComplete] = useState(false)
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const scrollToQuestion = () => {
+    questionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   useEffect(() => {
-    scrollToBottom()
-  }, [messages, showOptions])
+    // 마지막 메시지가 question 타입이면 질문으로 스크롤, 아니면 하단으로 스크롤
+    const lastMessage = messages[messages.length - 1]
+    if (lastMessage?.type === 'question') {
+      setTimeout(() => {
+        scrollToQuestion()
+      }, 100)
+    } else {
+      scrollToBottom()
+    }
+  }, [messages])
 
   useEffect(() => {
     const flow = conversationFlow[currentStep]
@@ -170,16 +257,17 @@ const [isComplete, setIsComplete] = useState(false)
       return () => clearTimeout(timer)
     } else if (flow.question) {
       const timer = setTimeout(() => {
+        // 질문 텍스트를 메시지에 추가 (question 타입으로)
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            type: 'question',
+            content: flow.question.text,
+          },
+        ])
         setShowOptions(true)
       }, 300)
-      return () => clearTimeout(timer)
-    } else if (currentStep === 0) {
-      // Auto-advance from intro
-      const timer = setTimeout(() => {
-        setCurrentStep(1)
-        setCurrentMessageIndex(0)
-        setShowOptions(false)
-      }, 1500)
       return () => clearTimeout(timer)
     }
   }, [currentStep, currentMessageIndex])
@@ -446,22 +534,51 @@ const handleAnalysisClick = async () => {
         {/* Chat Messages Area */}
         <main className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50/50 to-white px-4 py-6">
           <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
-              >
+            {messages.map((message, index) => {
+              // bot 메시지만 번갈아 색상 적용 (짝수: 청록색, 홀수: 연보라색)
+              const botMessageIndex = messages
+                .slice(0, index + 1)
+                .filter((m) => m.type === 'bot').length - 1
+              const isEvenBotMessage = botMessageIndex % 2 === 0
+
+              // question 타입 메시지 스타일
+              if (message.type === 'question') {
+                // 마지막 question 메시지에만 ref 적용
+                const isLastQuestion = index === messages.map((m, i) => (m.type === 'question' ? i : -1)).filter(i => i !== -1).pop()
+                return (
+                  <div
+                    key={message.id}
+                    ref={isLastQuestion ? questionRef : undefined}
+                    className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300"
+                  >
+                    <div className="rounded-3xl border-2 border-amber-300 bg-amber-50 px-6 py-4 shadow-md">
+                      <p className="whitespace-pre-wrap text-base font-semibold leading-relaxed text-amber-700">
+                        {message.content}
+                      </p>
+                    </div>
+                  </div>
+                )
+              }
+
+              return (
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
-                    message.type === 'user'
-                      ? 'bg-blue-500 text-white'
-                      : 'border border-gray-100 bg-white text-gray-800'
-                  }`}
+                  key={message.id}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
                 >
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                  <div
+                    className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
+                      message.type === 'user'
+                        ? 'bg-blue-500 text-white'
+                        : isEvenBotMessage
+                          ? 'border border-teal-200 bg-teal-50 text-teal-800'
+                          : 'border border-indigo-200 bg-indigo-50 text-indigo-800'
+                    }`}
+                  >
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
 
             {isTyping && (
               <div className="flex justify-start animate-in fade-in duration-200">
@@ -477,12 +594,6 @@ const handleAnalysisClick = async () => {
 
             {showOptions && currentFlow?.question && (
               <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex justify-start">
-                  <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 shadow-sm">
-                    <p className="text-sm font-medium text-gray-800">{currentFlow.question.text}</p>
-                  </div>
-                </div>
-
                 {currentFlow.question.options.map((option, index) => {
                   const IconComponent = getIconComponent(option.icon)
                   const isAlert = option.icon === 'alert'

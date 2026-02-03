@@ -45,7 +45,7 @@ export function Header() {
           <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
             가이드
           </a>
-          <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
+          <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="/">
             ETF AI 튜터
           </a>
           <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="/portfolio">
