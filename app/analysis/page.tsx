@@ -202,6 +202,7 @@ function StatCard({
 export default function AnalysisPage() {
   const [surveyData, setSurveyData] = useState<any>(null)
   const [isChatOpen, setIsChatOpen] = useState(false)
+  const [showMoreHoldings, setShowMoreHoldings] = useState(false)
 
   useEffect(() => {
     // sessionStorage에서 데이터 가져오기
@@ -487,7 +488,21 @@ interface ETFWithWeightAndColor extends ETFWithWeight {
                 <span className="px-3 py-1.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">KODEX 200 180만원</span>
                 <span className="px-3 py-1.5 bg-green-100 text-green-700 text-xs font-bold rounded-full">국민은행 예금 850만원</span>
                 <span className="px-3 py-1.5 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full">카카오 150만원</span>
-                <span className="px-3 py-1.5 bg-muted text-muted-foreground text-xs font-bold rounded-full">+2개 더보기</span>
+                {showMoreHoldings && (
+                  <>
+                    <span className="px-3 py-1.5 bg-purple-100 text-purple-700 text-xs font-bold rounded-full">네이버 200만원</span>
+                    <span className="px-3 py-1.5 bg-orange-100 text-orange-700 text-xs font-bold rounded-full">하나은행 예금 450만원</span>
+                  </>
+                )}
+                {!showMoreHoldings && (
+                  <button
+                    type="button"
+                    onClick={() => setShowMoreHoldings(true)}
+                    className="px-3 py-1.5 bg-muted text-muted-foreground text-xs font-bold rounded-full hover:bg-muted/80 transition-colors cursor-pointer"
+                  >
+                    +2개 더보기
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -625,13 +640,13 @@ interface ETFWithWeightAndColor extends ETFWithWeight {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/"
-                className="px-8 py-4 bg-white text-primary font-bold text-lg rounded-2xl hover:scale-105 transition-all"
+                className="px-8 py-4 bg-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/30 transition-all"
               >
                 홈으로 돌아가기
               </Link>
               <Link
                 href="/rebalancing"
-                className="px-8 py-4 bg-white/20 text-white font-bold text-lg rounded-2xl hover:bg-white/30 transition-all"
+                className="px-8 py-4 bg-white text-primary font-bold text-lg rounded-2xl hover:scale-105 transition-all"
               >
                 포트폴리오 저장하기 및 알림 받기
               </Link>

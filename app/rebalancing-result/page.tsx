@@ -10,8 +10,17 @@ import {
   ChevronRight,
   Settings,
   Mail,
+  CheckCircle2,
 } from "lucide-react"
 import { useEffect, useState, useMemo } from "react"
+import { useRouter } from "next/navigation"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 // Portfolio data
 const portfolioItems = [
@@ -79,7 +88,9 @@ const assignColorsToPortfolio = (portfolio: PortfolioItem[]) => {
 }
 
 export default function RebalancingResultPage() {
+  const router = useRouter()
   const [rebalancingData, setRebalancingData] = useState<any>(null)
+  const [isUnsubscribeDialogOpen, setIsUnsubscribeDialogOpen] = useState(false)
 
   useEffect(() => {
     // sessionStorage에서 데이터 가져오기
@@ -225,10 +236,10 @@ export default function RebalancingResultPage() {
                     <p key={item.etfId}>- {item.changeReason}</p>
                 ))}
               </div>
-              <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+              {/* <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <p>- 변동성이 조금 높은 ETF 비중을 줄였어</p>
                 <p>- 상대적으로 안정적인 자산 비중을 늘렸어</p>
-              </div>
+              </div> */}
             </div>
 
             {/* 3. Why This Change Card */}
@@ -242,7 +253,7 @@ export default function RebalancingResultPage() {
               <div className="flex flex-col gap-3 text-sm text-foreground leading-relaxed">
                 {newsEvidence.map((item, index) => (
                   <p key={`${item.etfId}-${index}`}>- {item.summary}</p>
-                )) }
+                ))}
                 {/* <p>- 최근 자산 변동이 컸고</p>
                 <p>- 네가 선택한 투자 성향 기준으로는</p>
                 <p>- 이 구성이 더 편할 것 같아서</p> */}
@@ -258,11 +269,11 @@ export default function RebalancingResultPage() {
                 <h2 className="text-lg font-bold text-foreground">이건 꼭 알고 있어</h2>
               </div>
               <div className="flex flex-col gap-2 text-sm text-orange-800">
-                {rebalancingData?.recommendations || [].map((item) => (
-                  <p>{item}</p>
+                {rebalancingData?.recommendations || [].map((item, index) => (
+                  <p key={index}>{item}</p>
                 ))}
-                <p>- 단기적으로는 여전히 흔들릴 수 있어</p>
-                <p>- 이건 참고용이고, 최종 선택은 항상 네 몫이야</p>
+                {/* <p>- 단기적으로는 여전히 흔들릴 수 있어</p>
+                <p>- 이건 참고용이고, 최종 선택은 항상 네 몫이야</p> */}
               </div>
             </div>
           </div>
@@ -288,22 +299,66 @@ export default function RebalancingResultPage() {
           </div>
 
           {/* Footer */}
-          <div className="p-6 md:p-8 border-t border-border/30 bg-muted/30">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <Link
-                href="#"
-                className="text-xs text-muted-foreground hover:text-primary transition-colors flex items-center gap-2"
-              >
-                <Mail className="w-3 h-3" />
-                알림 설정 변경 / 수신 거부
-              </Link>
-              <p className="text-sm text-muted-foreground">
-                필요할 때만, 부담 안 되게 알려줄게
-              </p>
-            </div>
-          </div>
+<div className="p-6 md:p-8 border-t border-border/30 bg-muted/30">
+  <div className="flex flex-col items-center gap-4 text-center">
+    <button
+      type="button"
+      onClick={() => setIsUnsubscribeDialogOpen(true)}
+      className="
+        text-sm md:text-base
+        text-muted-foreground hover:text-primary
+        transition-colors
+        flex items-center gap-2
+        px-3 py-2
+        rounded-lg
+        hover:bg-muted/60
+      "
+    >
+      <Mail className="w-4 h-4" />
+      수신 거부
+    </button>
+    <p className="text-base text-muted-foreground">
+      필요할 때만, 부담 안 되게 알려줄게
+    </p>
+  </div>
+</div>
+
         </div>
       </div>
+
+      {/* Unsubscribe Dialog */}
+      <Dialog open={isUnsubscribeDialogOpen} onOpenChange={(open) => {
+        setIsUnsubscribeDialogOpen(open)
+        if (!open) {
+          router.push("/analysis")
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="flex flex-col items-center text-center gap-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
+            </div>
+            <DialogTitle className="text-xl font-bold">수신 거부 완료</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              더 이상 리밸런싱 알림을 받지 않습니다.
+              <br />
+              언제든 설정에서 다시 켤 수 있어요.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setIsUnsubscribeDialogOpen(false)
+                router.push("/analysis")
+              }}
+              className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl hover:bg-primary/90 transition-colors"
+            >
+              확인
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

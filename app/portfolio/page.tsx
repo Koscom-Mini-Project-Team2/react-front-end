@@ -1,6 +1,17 @@
-import React from "react"
-import { Database, Wallet, Layers, ShieldCheck } from "lucide-react"
+"use client"
+
+import React, { useState } from "react"
+import { Database, Wallet, Layers, ShieldCheck, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 function FeatureItem({
   icon: Icon,
@@ -25,6 +36,19 @@ function FeatureItem({
 }
 
 export default function PortfolioPage() {
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const router = useRouter()
+
+  const handleConnect = () => {
+    // 마이데이터 연동 처리 (여기서 실제 연동 로직 추가 가능)
+    setIsSuccessOpen(true)
+  }
+
+  const handleConfirm = () => {
+    setIsSuccessOpen(false)
+    router.push("/survey")
+  }
+
   return (
     <main className="min-h-screen bg-background flex items-center justify-center p-6">
       {/* Card Container */}
@@ -74,13 +98,14 @@ export default function PortfolioPage() {
               </p>
             </div>
 
-            {/* Primary CTA Button */}
-            <Link
-              href="/survey"
-              className="block w-full py-6 bg-primary text-primary-foreground font-black text-xl md:text-2xl rounded-[28px] shadow-2xl shadow-primary/30 hover:scale-[1.02] hover:-translate-y-1 transition-all active:scale-95 text-center"
+{/* Primary CTA Button */}
+            <button
+              type="button"
+              onClick={handleConnect}
+              className="block w-full py-6 bg-primary text-primary-foreground font-black text-xl md:text-2xl rounded-[28px] shadow-2xl shadow-primary/30 hover:scale-[1.02] hover:-translate-y-1 transition-all active:scale-95 text-center cursor-pointer"
             >
               연동하고 계속하기
-            </Link>
+            </button>
 
             {/* Secondary Link */}
             <Link
@@ -92,10 +117,33 @@ export default function PortfolioPage() {
           </div>
         </div>
 
-        {/* Background Decorations */}
+{/* Background Decorations */}
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl -z-10" />
         <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-secondary/30 rounded-full blur-3xl -z-10" />
       </div>
+
+      {/* Success Dialog */}
+      <Dialog open={isSuccessOpen} onOpenChange={setIsSuccessOpen}>
+        <DialogContent className="max-w-sm rounded-[24px] p-8 text-center">
+          <DialogHeader className="items-center">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+            <DialogTitle className="text-2xl font-black text-foreground">
+              마이데이터 연동 성공!
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground font-medium mt-2">
+              이제 맞춤 ETF 추천을 받을 수 있어요.
+            </DialogDescription>
+          </DialogHeader>
+          <Button
+            onClick={handleConfirm}
+            className="w-full mt-6 py-6 text-lg font-bold rounded-[16px]"
+          >
+            확인
+          </Button>
+        </DialogContent>
+      </Dialog>
     </main>
   )
 }

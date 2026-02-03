@@ -133,7 +133,8 @@ export default function SurveyPage() {
   const [showOptions, setShowOptions] = useState(false)
   const [answers, setAnswers] = useState<Record<number, string>>({})
   const [isTyping, setIsTyping] = useState(false)
-  const [isComplete, setIsComplete] = useState(false)
+const [isComplete, setIsComplete] = useState(false)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const totalQuestions = conversationFlow.filter((f) => f.question).length
@@ -274,6 +275,8 @@ const handleAnalysisClick = async () => {
   const responseBody = generateResponseBody(answers);
   console.log(">> SurveyResult Response Body >>>: ", responseBody);
 
+  setIsAnalyzing(true);
+
   try {
     // API로 POST 요청
     const response = await fetch(`${window.location.origin}/api/survey`, {
@@ -286,7 +289,7 @@ const handleAnalysisClick = async () => {
 
     if (!response.ok) {
       console.error('Failed to submit survey:', response.status);
-      // 에러 처리 (선택사항)
+      setIsAnalyzing(false);
       alert('설문 제출에 실패했습니다.');
       return;
     }
@@ -296,10 +299,8 @@ const handleAnalysisClick = async () => {
 
     // localStorage에도 저장 (백업용)
     localStorage.setItem('surveyResults', JSON.stringify(responseBody));
-    //localStorage.setItem('surveyResponse', JSON.stringify(data));
 
     // sessionStorage에 데이터 저장
-    // sessionStorage.setItem('surveyResponse', JSON.stringify(data));
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
     }
@@ -308,14 +309,74 @@ const handleAnalysisClick = async () => {
     router.push('/analysis');
   } catch (error) {
     console.error('Error submitting survey:', error);
+    setIsAnalyzing(false);
     alert('네트워크 오류가 발생했습니다.');
   }
 }
 
   const currentFlow = conversationFlow[currentStep]
 
+// Animated Graph Loading Component
+  const GraphLoadingAnimation = () => {
+    return (
+      <div className="flex items-end justify-center gap-1.5 h-16">
+        {[0, 1, 2, 3, 4, 5, 6].map((index) => (
+          <div
+            key={index}
+            className="w-3 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-sm"
+            style={{
+              animation: `graphBar 1.2s ease-in-out infinite`,
+              animationDelay: `${index * 0.1}s`,
+              height: '20px',
+            }}
+          />
+        ))}
+        <style jsx>{`
+          @keyframes graphBar {
+            0%, 100% {
+              height: 20px;
+            }
+            50% {
+              height: 56px;
+            }
+          }
+        `}</style>
+      </div>
+    );
+  };
+
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-blue-50 via-slate-50 to-gray-100 p-4">
+      {/* Analysis Loading Modal */}
+      {isAnalyzing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="mx-4 w-full max-w-sm rounded-3xl border border-white/60 bg-white/95 p-8 shadow-2xl backdrop-blur-xl animate-in zoom-in-95 duration-300">
+            {/* Content */}
+            <div className="flex flex-col items-center gap-6">
+              {/* Graph Animation Container */}
+              <div className="flex h-24 w-full items-end justify-center rounded-2xl bg-gradient-to-b from-blue-50 to-white p-4">
+                <GraphLoadingAnimation />
+              </div>
+              
+              {/* Text */}
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-gray-800">분석 중...</h3>
+                <p className="mt-2 text-sm text-gray-500">
+                  투자 성향을 분석하고 있어요
+                </p>
+              </div>
+              
+              {/* Loading dots */}
+              {/* <div className="flex gap-1.5">
+                <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500 [animation-delay:-0.3s]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500 [animation-delay:-0.15s]" />
+                <div className="h-2 w-2 animate-bounce rounded-full bg-blue-500" />
+              </div> */}
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Background decorative elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Blurred shapes */}

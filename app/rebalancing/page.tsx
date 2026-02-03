@@ -45,6 +45,7 @@ const periodOptions: PeriodOption[] = [
 export default function RebalancingPage() {
   const [selectedPeriod, setSelectedPeriod] = useState<RebalancingPeriod | null>(null)
   const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   const router = useRouter()
   // const [selectedPeriod, setSelectedPeriod] = useState<RebalancingPeriod | null>(null)
@@ -69,114 +70,116 @@ export default function RebalancingPage() {
       period: parseInt(selectedOption.period)
     };
 
-    console.log(">> Rebalancing Request Body >>>: ", requestBody);
+console.log(">> Rebalancing Request Body >>>: ", requestBody);
+
+    setIsLoading(true);
 
     try {
-      // // API 호출 예시 (실제 엔드포인트로 교체 필요)
-      // const response = await fetch('/api/rebalancing', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(requestBody),
-      // });
+      // API 호출 예시 (실제 엔드포인트로 교체 필요)
+      const response = await fetch('/api/rebalancing', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
       
-      // if (!response.ok) {
-      //   throw new Error('Failed to submit rebalancing settings');
-      // }
+      if (!response.ok) {
+        throw new Error('Failed to submit rebalancing settings');
+      }
       
-      // const data = await response.json();
-      // console.log('Success:', data);
+      const data = await response.json();
+      console.log('Success:', data);
 
-      const data = {
-  portfolioId: 1,
-  portfolioName: "내 안정형 포트폴리오",
-  rebalancingRequired: true,
-  rebalancingReason:
-    "삼성전자에서 임원 및 주요주주들의 지분 변동이 집중적으로 발생하고 있으며, 삼성SDI가 작년 연간 1조7천억원의 영업손실을 기록하며 적자 전환했습니다.",
+//       const data = {
+//   portfolioId: 1,
+//   portfolioName: "내 안정형 포트폴리오",
+//   rebalancingRequired: true,
+//   rebalancingReason:
+//     "삼성전자에서 임원 및 주요주주들의 지분 변동이 집중적으로 발생하고 있으며, 삼성SDI가 작년 연간 1조7천억원의 영업손실을 기록하며 적자 전환했습니다.",
 
-  currentPortfolio: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      category: "국내주식",
-      currentWeight: 45.0
-    },
-    {
-      etfId: 2,
-      etfName: "TIGER 미국S&P500",
-      category: "해외주식",
-      currentWeight: 30.0
-    },
-    {
-      etfId: 5,
-      etfName: "KODEX 코스닥150",
-      category: "국내주식",
-      currentWeight: 25.0
-    }
-  ],
+//   currentPortfolio: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       category: "국내주식",
+//       currentWeight: 45.0
+//     },
+//     {
+//       etfId: 2,
+//       etfName: "TIGER 미국S&P500",
+//       category: "해외주식",
+//       currentWeight: 30.0
+//     },
+//     {
+//       etfId: 5,
+//       etfName: "KODEX 코스닥150",
+//       category: "국내주식",
+//       currentWeight: 25.0
+//     }
+//   ],
 
-  recommendedPortfolio: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      category: "국내주식",
-      currentWeight: 45.0,
-      recommendedWeight: 40.0,
-      changeAmount: -5.0,
-      changeReason: "비중 축소 권장"
-    },
-    {
-      etfId: 2,
-      etfName: "TIGER 미국S&P500",
-      category: "해외주식",
-      currentWeight: 30.0,
-      recommendedWeight: 35.0,
-      changeAmount: 5.0,
-      changeReason: "비중 확대 권장"
-    },
-    {
-      etfId: 5,
-      etfName: "KODEX 코스닥150",
-      category: "국내주식",
-      currentWeight: 25.0,
-      recommendedWeight: 25.0,
-      changeAmount: 0.0,
-      changeReason: "유지"
-    }
-  ],
+//   recommendedPortfolio: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       category: "국내주식",
+//       currentWeight: 45.0,
+//       recommendedWeight: 40.0,
+//       changeAmount: -5.0,
+//       changeReason: "비중 축소 권장"
+//     },
+//     {
+//       etfId: 2,
+//       etfName: "TIGER 미국S&P500",
+//       category: "해외주식",
+//       currentWeight: 30.0,
+//       recommendedWeight: 35.0,
+//       changeAmount: 5.0,
+//       changeReason: "비중 확대 권장"
+//     },
+//     {
+//       etfId: 5,
+//       etfName: "KODEX 코스닥150",
+//       category: "국내주식",
+//       currentWeight: 25.0,
+//       recommendedWeight: 25.0,
+//       changeAmount: 0.0,
+//       changeReason: "유지"
+//     }
+//   ],
 
-  newsEvidence: [
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      newsTitle: "삼성전자, 임원ㆍ주요주주 특정증권등 소유주식수 변동",
-      newsUrl: "https://news.koscom.co.kr/news/N20260202001",
-      publishedAt: "2026-02-02T13:32:00",
-      impact: "NEGATIVE",
-      summary: "삼성전자 임원진의 대규모 지분 변동 발생"
-    },
-    {
-      etfId: 1,
-      etfName: "KODEX 200",
-      newsTitle: "삼성SDI, 작년 연간 연결 영업손실 1조7223억...적자전환",
-      newsUrl: "https://news.koscom.co.kr/news/N20260202002",
-      publishedAt: "2026-02-02T13:31:00",
-      impact: "NEGATIVE",
-      summary: "삼성SDI가 대규모 적자를 기록하며 실적 악화"
-    }
-  ],
+//   newsEvidence: [
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       newsTitle: "삼성전자, 임원ㆍ주요주주 특정증권등 소유주식수 변동",
+//       newsUrl: "https://news.koscom.co.kr/news/N20260202001",
+//       publishedAt: "2026-02-02T13:32:00",
+//       impact: "NEGATIVE",
+//       summary: "삼성전자 임원진의 대규모 지분 변동 발생"
+//     },
+//     {
+//       etfId: 1,
+//       etfName: "KODEX 200",
+//       newsTitle: "삼성SDI, 작년 연간 연결 영업손실 1조7223억...적자전환",
+//       newsUrl: "https://news.koscom.co.kr/news/N20260202002",
+//       publishedAt: "2026-02-02T13:31:00",
+//       impact: "NEGATIVE",
+//       summary: "삼성SDI가 대규모 적자를 기록하며 실적 악화"
+//     }
+//   ],
 
-  riskAssessment: "MEDIUM",
+//   riskAssessment: "MEDIUM",
 
-  recommendations: [
-    "국내 반도체 섹터의 단기 변동성을 고려하여 해외 주식 비중을 확대하는 것이 안정적입니다",
-    "삼성SDI 등 2차전지 관련 종목의 실적 회복 시기를 주시하며 재조정을 고려하세요",
-    "단기적 조정보다는 분할 매매를 통한 점진적 리밸런싱을 권장합니다"
-  ],
+//   recommendations: [
+//     "국내 반도체 섹터의 단기 변동성을 고려하여 해외 주식 비중을 확대하는 것이 안정적입니다",
+//     "삼성SDI 등 2차전지 관련 종목의 실적 회복 시기를 주시하며 재조정을 고려하세요",
+//     "단기적 조정보다는 분할 매매를 통한 점진적 리밸런싱을 권장합니다"
+//   ],
 
-  analyzedAt: "2026-02-02T14:30:15"
-};
+//   analyzedAt: "2026-02-02T14:30:15"
+// };
 
       // sessionStorage에 데이터 저장
       // sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
@@ -191,11 +194,15 @@ export default function RebalancingPage() {
       sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
     }
       
-      // router.push('/rebalancing-result');
+      
       // 성공 팝업 표시
-      setShowSuccessDialog(true);
-    } catch (error) {
+      // setShowSuccessDialog(true);
+      
+
+      router.push('/rebalancing-result');
+} catch (error) {
       console.error('Error submitting rebalancing settings:', error);
+      setIsLoading(false);
       alert('네트워크 오류가 발생했습니다.');
     }
   }
@@ -324,7 +331,68 @@ export default function RebalancingPage() {
             </Link>
           </div>
 
-                {/* 이메일 전송 완료 팝업 */}
+{/* 로딩 팝업 */}
+      <Dialog open={isLoading} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 relative mb-4">
+              {/* 메일 전송 애니메이션 */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="relative">
+                  {/* 메일 아이콘 */}
+                  <div className="animate-[mailBounce_1.5s_ease-in-out_infinite]">
+                    <Mail className="w-10 h-10 text-primary" />
+                  </div>
+                  {/* 전송 파티클 */}
+                  <div className="absolute -right-2 top-1/2 -translate-y-1/2">
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full animate-[sendDot_1s_ease-in-out_infinite]" />
+                      <div className="w-1.5 h-1.5 bg-primary/70 rounded-full animate-[sendDot_1s_ease-in-out_infinite_0.2s]" />
+                      <div className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-[sendDot_1s_ease-in-out_infinite_0.4s]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogTitle className="text-xl font-bold text-foreground">분석 중</DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-2">
+              예상 리밸런싱 결과를 분석하고 있어요.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
+      <style jsx global>{`
+        @keyframes mailBounce {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          25% {
+            transform: translateY(-4px) translateX(2px);
+          }
+          50% {
+            transform: translateY(0) translateX(4px);
+          }
+          75% {
+            transform: translateY(-2px) translateX(2px);
+          }
+        }
+        @keyframes sendDot {
+          0% {
+            opacity: 0;
+            transform: translateX(-8px);
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+            transform: translateX(8px);
+          }
+        }
+      `}</style>
+
+      {/* 이메일 전송 완료 팝업 */}
       <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="flex flex-col items-center text-center">

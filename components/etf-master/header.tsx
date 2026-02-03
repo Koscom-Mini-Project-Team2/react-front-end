@@ -3,9 +3,11 @@
 import { useState } from "react"
 import { TrendingUp, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const router = useRouter()
 
   const handleApiTest = async () => {
     try {
@@ -24,6 +26,7 @@ export function Header() {
     } catch (error) {
       console.error("API Test Error:", error);
     }
+
   }
 
   return (
@@ -45,15 +48,15 @@ export function Header() {
           <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
             ETF AI 튜터
           </a>
-          <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="#">
-            ETF 찾기
+          <a className="text-sm font-bold text-slate-600 hover:text-primary transition-colors" href="/portfolio">
+            ETF 찾아보기
           </a>
         </nav>
 
         {/* Desktop CTA */}
         <button className="hidden md:block px-7 py-3 bg-gradient-to-r from-primary to-blue-400 text-white font-extrabold text-sm rounded-2xl hover:scale-105 transition-all shadow-lg shadow-primary/20"
-        onClick={handleApiTest}>
-          REST API 테스트
+        onClick={() => router.push("/portfolio")}>
+          내 포트폴리오 만들기
         </button>
 
         {/* Mobile Menu Button */}
