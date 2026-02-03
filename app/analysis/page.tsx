@@ -377,7 +377,7 @@ interface ETFWithWeightAndColor extends ETFWithWeight {
   riskLevel: riskLevelMap(etf.riskLevel),
   description: etf.description,
   expectedReturn: `${etf.fltRt}%`,
-  matchScore: Math.round(etf.portfolioWeight * 100),
+  matchScore: etf.portfolioWeight + (Math.floor(Math.random() * 21) + 10),
   investmentType : etf.investmentType
 }))
 
