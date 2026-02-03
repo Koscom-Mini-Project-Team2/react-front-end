@@ -16,6 +16,8 @@ import {
   Wallet,
   Building2,
   CreditCard,
+  MessageCircle,
+  X,
 } from "lucide-react"
 import { AIChat } from "@/components/etf-master";
 
@@ -186,6 +188,7 @@ function StatCard({
 
 export default function AnalysisPage() {
   const [surveyData, setSurveyData] = useState<any>(null)
+  const [isChatOpen, setIsChatOpen] = useState(false)
 
   useEffect(() => {
     // sessionStorage에서 데이터 가져오기
@@ -197,6 +200,8 @@ export default function AnalysisPage() {
   }, [])
 
   console.log('Current Analysis Data:', surveyData);
+
+  sessionStorage.setItem('etfItems', JSON.stringify(surveyData?.etfs || []));
 
   // portfolioWeights와 etfs를 결합하여 ETFItem 배열 생성
 const combinedETFs = useMemo<ETFWithWeight[]>(() => {
@@ -455,7 +460,8 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
           </div>
         </section> */}
 
-        <AIChat />
+        {/* 주석 처리_260203 */}
+        {/* <AIChat /> */}
 
         {/* CTA Section */}
         <section className="text-center py-10 md:py-14">
@@ -481,6 +487,65 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
           </div>
         </section>
       </div>
+
+            {/* Floating Chatbot Button with Speech Bubble */}
+      <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
+        {!isChatOpen && (
+          <div className="relative animate-bounce">
+            <div className="bg-card border border-border/50 shadow-xl rounded-3xl px-6 py-5 max-w-[280px]">
+              <p className="text-base font-semibold text-foreground leading-relaxed">
+                ETF 투자에 대해 궁금한 점이 있으신가요? 
+              </p>
+              <p className="text-sm text-primary font-bold mt-2">AI에게 물어보세요!</p>
+            </div>
+            <div className="absolute -bottom-2.5 right-8 w-5 h-5 bg-card border-r border-b border-border/50 transform rotate-45" />
+          </div>
+        )}
+
+        <button
+          onClick={() => setIsChatOpen(true)}
+          className="w-20 h-20 bg-gradient-to-br from-primary to-blue-400 rounded-full shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-110 transition-all hover:shadow-2xl hover:shadow-primary/40"
+        >
+          <MessageCircle className="w-9 h-9 text-white" strokeWidth={2.5} />
+        </button>
+      </div>
+
+      {isChatOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6">
+          <div 
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setIsChatOpen(false)}
+          />
+          
+          {/* 팝업 크기 확대: max-w-4xl, 높이 90vh */}
+          <div className="relative w-full sm:max-w-4xl h-[92vh] sm:h-[850px] sm:max-h-[90vh] bg-card rounded-t-3xl sm:rounded-3xl shadow-2xl border border-border/50 overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300">
+            {/* 헤더 - 닫기 버튼만 */}
+            <div className="flex items-center justify-between p-4 border-b border-border/50 bg-muted shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-blue-400 rounded-lg flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4 text-white" />
+                </div>
+                <span className="font-bold text-foreground text-sm">Ko-MERIT AI 튜터</span>
+              </div>
+              <button
+                onClick={() => setIsChatOpen(false)}
+                className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center hover:bg-muted transition-colors"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            
+            {/* AIChat 컴포넌트 */}
+            <div className="flex-1 overflow-y-auto"
+              style={{
+                scrollbarWidth: "none",      // Firefox
+                msOverflowStyle: "none",     // IE / Edge
+            }}>
+              <AIChat />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
