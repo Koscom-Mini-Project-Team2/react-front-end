@@ -207,6 +207,8 @@ export default function AnalysisPage() {
   useEffect(() => {
     // sessionStorage에서 데이터 가져오기
     const storedData = sessionStorage.getItem('surveyResponse')
+    // const storedData = localStorage.getItem('surveyResponse')
+
     if (storedData) {
       setSurveyData(JSON.parse(storedData))
       console.log('Survey Response data:', JSON.parse(storedData))

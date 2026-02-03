@@ -388,6 +388,10 @@ const handleAnalysisClick = async () => {
     // localStorage에도 저장 (백업용)
     localStorage.setItem('surveyResults', JSON.stringify(responseBody));
 
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('surveyResponse', JSON.stringify(data));
+    }
+
     // sessionStorage에 데이터 저장
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
