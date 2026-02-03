@@ -31,6 +31,7 @@ interface ETFRecommendation {
   expectedReturn: string
   description: string
   matchScore: number
+  investmentType : string
 }
 
 // interface ETFRecommendation {
@@ -87,6 +88,11 @@ interface PortfolioItem {
 }
 
 // ETFItem 타입 정의
+interface StockItem {
+  name: string
+  cat: string
+  cat_code: number
+}
 interface ETFItem {
   id: number
   name: string
@@ -94,19 +100,26 @@ interface ETFItem {
   riskLevel: number
   category: string
   description: string
+  investmentType : string
+  stockList: StockItem[]
 }
 interface ETFWithWeight extends ETFItem {
   portfolioWeight: number
+}
+interface TotalStock {
+    cat_code: number
+    cat: string
+    portfolioWeight: number
 }
 
 
 // 색상 팔레트
 const colorPalette = [
   "bg-primary",
+  "bg-orange-400",
   "bg-blue-400",
   "bg-emerald-400",
   "bg-purple-400",
-  "bg-orange-400",
 ]
 
 
@@ -125,7 +138,7 @@ function ETFCard({ etf }: { etf: ETFRecommendation }) {
             <h3 className="text-xl font-black text-foreground">{etf.name}</h3>
             <span className="text-sm text-muted-foreground font-medium">({etf.ticker})</span>
           </div>
-          <span className="text-sm font-semibold text-primary">{etf.category}</span>
+          <span className="text-sm font-semibold text-primary">{etf.investmentType}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`px-3 py-1 rounded-full text-xs font-bold ${riskColors[etf.riskLevel]}`}>
@@ -203,6 +216,7 @@ export default function AnalysisPage() {
 
   sessionStorage.setItem('etfItems', JSON.stringify(surveyData?.etfs || []));
 
+
   // portfolioWeights와 etfs를 결합하여 ETFItem 배열 생성
 const combinedETFs = useMemo<ETFWithWeight[]>(() => {
   if (!surveyData?.etfs || !surveyData?.portfolioWeights) return []
@@ -215,6 +229,125 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
 
   console.log('Combined ETFs with weights:', combinedETFs);
 
+// const totalStocks = useMemo<TotalStock[]>(() => {
+//   if (!combinedETFs.length) return []
+
+//   const stockMap = new Map<number, TotalStock>()
+
+// combinedETFs.forEach((etf) => {
+//   // stockList의 첫 번째 요소만 확인
+//   const stock = etf.stockList[0]
+  
+//   if (stock) {
+//     const existing = stockMap.get(stock.cat_code)
+    
+//     if (existing) {
+//       // 기존에 같은 cat_code가 있으면 weight 누적
+//       existing.portfolioWeight += etf.portfolioWeight
+//     } else {
+//       // 없으면 새로 추가
+//       stockMap.set(stock.cat_code, {
+//         cat_code: stock.cat_code,
+//         cat: stock.cat,
+//         portfolioWeight: etf.portfolioWeight,
+//       })
+//     }
+//   }
+// })
+  
+
+  // // Map을 배열로 변환하고 portfolioWeight 기준 내림차순 정렬
+  // return Array.from(stockMap.values()).sort((a, b) => b.portfolioWeight - a.portfolioWeight)
+  // }, [combinedETFs])
+
+  // TotalStock에 색상 추가
+interface TotalStockWithColor extends TotalStock {
+  color: string
+}
+
+const totalStocks = useMemo<TotalStockWithColor[]>(() => {
+  if (!combinedETFs.length) return []
+
+  const stockMap = new Map<number, TotalStock>()
+
+  combinedETFs.forEach((etf) => {
+    const stock = etf.stockList[0]
+    
+    if (stock) {
+      const existing = stockMap.get(stock.cat_code)
+      
+      if (existing) {
+        existing.portfolioWeight += etf.portfolioWeight
+      } else {
+        stockMap.set(stock.cat_code, {
+          cat_code: stock.cat_code,
+          cat: stock.cat,
+          portfolioWeight: etf.portfolioWeight,
+        })
+      }
+    }
+  })
+
+  // Map을 배열로 변환하고 portfolioWeight 기준 내림차순 정렬 후 색상 매핑
+  return Array.from(stockMap.values())
+    .sort((a, b) => b.portfolioWeight - a.portfolioWeight)
+    .map((stock, index) => ({
+      ...stock,
+      color: colorPalette[index % colorPalette.length]
+    }))
+}, [combinedETFs])
+
+// cat_code별 색상 매핑 객체 생성
+const categoryColorMap = useMemo(() => {
+  const colorMap = new Map<number, string>()
+  totalStocks.forEach(stock => {
+    colorMap.set(stock.cat_code, stock.color)
+  })
+  return colorMap
+}, [totalStocks])
+
+// combinedETFs에 색상 정보 추가
+interface ETFWithWeightAndColor extends ETFWithWeight {
+  color: string
+}
+
+  // const combinedETFsWithColor = useMemo<ETFWithWeightAndColor[]>(() => {
+  //   return combinedETFs
+  //     .map(etf => ({
+  //       ...etf,
+  //       color: categoryColorMap.get(etf.stockList[0]?.cat_code) || colorPalette[0]
+  //     }))
+  //     .sort((a, b) => b.portfolioWeight - a.portfolioWeight) // 내림차순 정렬
+  // }, [combinedETFs, categoryColorMap]);
+
+  const combinedETFsWithColor = useMemo<ETFWithWeightAndColor[]>(() => {
+    // totalStocks의 cat_code 순서를 인덱스로 매핑
+    const catCodeOrder = new Map<number, number>()
+    totalStocks.forEach((stock, index) => {
+      catCodeOrder.set(stock.cat_code, index)
+    })
+  
+    return combinedETFs
+      .map(etf => ({
+        ...etf,
+        color: categoryColorMap.get(etf.stockList[0]?.cat_code) || colorPalette[0]
+      }))
+      .sort((a, b) => {
+        // 1차 정렬: totalStocks의 순서대로 (비중이 큰 카테고리부터)
+        const orderA = catCodeOrder.get(a.stockList[0]?.cat_code) ?? 999
+        const orderB = catCodeOrder.get(b.stockList[0]?.cat_code) ?? 999
+      
+        if (orderA !== orderB) {
+          return orderA - orderB
+        }
+      
+        // 2차 정렬: 같은 카테고리 내에서 portfolioWeight 내림차순
+        return b.portfolioWeight - a.portfolioWeight
+      })
+  }, [combinedETFs, categoryColorMap, totalStocks]);
+
+  console.log('TotalStock ETFs with weights:', totalStocks);
+
   const etfRecommendations: ETFRecommendation[] = combinedETFs.map((etf) => ({
   id: etf.id,
   name: etf.name,
@@ -224,6 +357,7 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
   description: etf.description,
   expectedReturn: `${etf.fltRt}%`,
   matchScore: Math.round(etf.portfolioWeight * 100),
+  investmentType : etf.investmentType
 }))
 
 
@@ -279,7 +413,7 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
           <StatCard icon={Shield} label="ETF 위험도" value={surveyData?.etfRiskScore} color="bg-gradient-to-br from-yellow-400 to-orange-400" />
           <StatCard icon={PieChart} label="배당률" value={`${surveyData?.dividendScore}%`} color="bg-gradient-to-br from-green-400 to-emerald-500" />
           {/* @TODO 백엔드에서 데이터 가져올 때 예상 수익률 없음 */}
-          <StatCard icon={Zap} label="예상 수익" value="+8.2%" color="bg-gradient-to-br from-purple-400 to-pink-500" />
+          <StatCard icon={Zap} label="예상 수익" value={`${surveyData?.expectedTotalReturn}%`} color="bg-gradient-to-br from-purple-400 to-pink-500" />
         </section>
 
         {/* MyData Summary Section */}
@@ -372,15 +506,15 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
           <div className="p-6 bg-card/60 backdrop-blur-xl rounded-3xl border border-border/50">
             {/* 동적 비중 바 */}
             <div className="flex gap-2 h-8 rounded-full overflow-hidden mb-4">
-              {combinedETFs.map((etf, index) => (
+              {totalStocks.map((etf, index) => (
                 <div
-                  key={etf.id}
+                  key={etf.cat_code}
                   className={`${colorPalette[index % colorPalette.length]} flex items-center justify-center`}
                   style={{ flex: etf.portfolioWeight }}
                 >
                   <span className="text-xs font-bold text-white truncate px-2">
                     {/* @TODO etfs에 ETF 대분류 카테고리가 없음(예: 국내, 해와, 금, 채권 등) */}
-                    {etf.name} {etf.portfolioWeight}%
+                    {etf.cat || ""} {etf.portfolioWeight}%
                   </span>
                 </div>
               ))}
@@ -388,9 +522,9 @@ const combinedETFs = useMemo<ETFWithWeight[]>(() => {
 
             {/* ETF 목록 */}
             <div className="space-y-3 mb-4">
-              {combinedETFs.map((etf, index) => (
+              {combinedETFsWithColor.map((etf) => (
                 <div key={etf.id} className="flex items-center gap-3">
-                  <div className={`w-4 h-4 ${colorPalette[index % colorPalette.length]} rounded-full`} />
+                  <div className={`w-4 h-4 ${etf.color} rounded-full`} />
                   <span className="text-sm font-bold text-foreground flex-1">{etf.name}</span>
                   <span className="text-sm font-bold text-primary">{etf.portfolioWeight}%</span>
                 </div>
