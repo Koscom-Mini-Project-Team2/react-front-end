@@ -299,7 +299,10 @@ const handleAnalysisClick = async () => {
     //localStorage.setItem('surveyResponse', JSON.stringify(data));
 
     // sessionStorage에 데이터 저장
-    sessionStorage.setItem('surveyResponse', JSON.stringify(data));
+    // sessionStorage.setItem('surveyResponse', JSON.stringify(data));
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
+    }
 
     // 분석 페이지로 이동
     router.push('/analysis');

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useRouter } from 'next/navigation'
 import Link from "next/link"
 import { TrendingUp, ArrowLeft, Bell, Calendar, Mail, Check } from "lucide-react"
@@ -179,7 +179,17 @@ export default function RebalancingPage() {
 };
 
       // sessionStorage에 데이터 저장
+      // sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
+
+        // useEffect(() => {
+        //   if (data) {
+        //     sessionStorage.setItem('rebalancingResult', JSON.stringify(data))
+        //     console.log('Current rebalancingResult Data:', data)
+        //   }
+      // }, [data])
+    if (typeof window !== 'undefined') {
       sessionStorage.setItem('rebalancingResult', JSON.stringify(data));
+    }
       
       // router.push('/rebalancing-result');
       // 성공 팝업 표시
